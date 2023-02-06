@@ -32,7 +32,7 @@ class MyWindow(QWidget):
                                  "background : red;"
                                  "}")
 
-    def recieve_position(self, position: tuple):
+    def update_position(self, position: tuple):
         self.square.move(position[0], position[1])
 
     def keyPressEvent(self, event):

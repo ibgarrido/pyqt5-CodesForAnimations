@@ -9,4 +9,6 @@ if __name__ == '__main__':
     window = MyWindow()
     window_logic = MyWindowLogic()
     #conections
+    window.signal_jump.connect(window_logic.jump)
+    window_logic.signal_position.connect(window.update_position)
     exit(app.exec())

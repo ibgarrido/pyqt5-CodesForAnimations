@@ -1,50 +1,48 @@
 from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QThread
-from PyQt5
+from time import sleep
 
 class MyWindowLogic(QObject):
     signal_position = pyqtSignal(tuple)
 
     def __init__(self):
         super().__init__()
-        self.square = Square(self.signal_position)
-        self.timer_jump = QTimer()
-        self.set_timer()
+        self.square = Square()
 
-    def set_timer(self):
-        pass
+    def jump(self):
+        self.square.alive = True
+        self.square.signal_position = self.signal_position
+        self.square.start()
+
 
 
 
 class Square(QThread):
 
 
-    def __init__(self, signal_position):
+    def __init__(self):
         super().__init__()
         self.x = 200
-        self._y = 200
+        self.y = 200
         self.acceleration = 1
         self.speed = 5
-        self.run = None
-        self.signal_position = signal_position
+        self.alive = False
+        self.signal_position = None
 
-    @property
-    def y(self):
-        return self._y
 
-    @y.setter
-    def y(self, value):
-        pass
 
-    def jump(self):
+    def run(self):
         "This part require to understand a bit of physics: uniformly accelerated motion"
-        position = self.acceleration*(self.speed)**2
-        self.y -= position
-        self.signal_position.emit((self.x, self.y))
-        print(self.x, self.y)
-        self.speed -= 1
-        if self.speed < 0:
-            self.acceleration *= -1
-        if self.speed == -6:
-            self.run = False
-            self.speed = 5
-            self.mass = 1
+        while self.alive:
+            sleep(0.05)
+            position = self.acceleration*(self.speed)**2  #The movement represent a parabola where speed is the x variable and position the f(x)
+            # print(position) Debuging
+            self.y -= position
+            self.signal_position.emit((self.x, self.y))
+            # print(self.x, self.y) Debuging
+            self.speed -= 1
+            if self.speed < 0:
+                self.acceleration = -1
+            if self.speed == -6:
+                self.alive = False
+                self.speed = 5
+                self.acceleration = 1
